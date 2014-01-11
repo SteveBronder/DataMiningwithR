@@ -1,7 +1,7 @@
 ##http://cran.r-project.org/doc/contrib/Zhao_R_and_data_mining.pdf
 
 ###################################################
-### The Available Data
+### The Available Data_
 ###################################################
 library(DMwR)
 data(GSPC)
