@@ -1,0 +1,43 @@
+# Code received from http://stackoverflow.com/questions/20319321/scraping-data-from-tables-on-multiple-web-pages-in-r-football-players
+
+require(RCurl); require(XML)
+n <- length(letters) 
+# pre-allocate list to fill
+links <- vector("list", length = n)
+for(i in 1:n){
+  print(i) # keep track of what the function is up to
+  # get all html on each page of the a-z index pages
+  inx_page <- htmlParse(getURI(paste0("http://www.sports-reference.com/cfb/players/", letters[i], "-index.html")))
+  # scrape URLs for each player from each index page
+  lnk <- unname(xpathSApply(inx_page, "//a/@href"))
+  # skip first 63 and last 10 links as they are constant on each page
+  lnk <- lnk[-c(1:63, (length(lnk)-10):length(lnk))]
+  # only keep links that go to players (exclude schools)
+  lnk <- lnk[grep("players", lnk)]
+  # now we have a list of all the URLs to all the players on that index page
+  # but the URLs are incomplete, so let's complete them so we can use them from 
+  # anywhere
+  links[[i]] <- paste0("http://www.sports-reference.com", lnk)
+}
+# unlist into a single character vector
+links <- unlist(links)
+
+# Go to each URL in the list and scrape all the data from the tables
+# this will take some time... don't interrupt it!
+# start edit1 here - just so you can see what's changed
+    # pre-allocate list
+all_tables <- vector("list", length = (length(links)))
+for(i in 1:length(links)){
+  print(i)
+  # error handling - skips to next URL if it gets an error
+  result <- try(
+    all_tables[[i]] <- readHTMLTable(links[i], stringsAsFactors = FALSE)
+  ); if(class(result) == "try-error") next;
+}
+# end edit1 here
+# Put player names in the list so we know who the data belong to
+# extract names from the URLs to their stats page...
+toMatch <- c("http://www.sports-reference.com/cfb/players/", "-1.html")
+player_names <- unique (gsub(paste(toMatch,collapse="|"), "", links))
+# assign player names to list of tables
+names(all_tables) <- player_names
