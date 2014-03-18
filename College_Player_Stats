@@ -24,7 +24,6 @@ links <- unlist(links)
 
 # Go to each URL in the list and scrape all the data from the tables
 # this will take some time... don't interrupt it!
-# start edit1 here - just so you can see what's changed
     # pre-allocate list
 all_tables <- vector("list", length = (length(links)))
 for(i in 1:length(links)){
@@ -34,7 +33,6 @@ for(i in 1:length(links)){
     all_tables[[i]] <- readHTMLTable(links[i], stringsAsFactors = FALSE)
   ); if(class(result) == "try-error") next;
 }
-# end edit1 here
 # Put player names in the list so we know who the data belong to
 # extract names from the URLs to their stats page...
 toMatch <- c("http://www.sports-reference.com/cfb/players/", "-1.html")
