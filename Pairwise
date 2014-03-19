@@ -1,0 +1,11 @@
+###########################################
+#####Pairwise Approach for First Stage of Bai and Ng PANIC METHOD
+##############################################
+
+#Import data as .xts
+data1<-as.xts(ts(read.csv(file.choose(),header=TRUE,row.names="Year"),frequency=12,start=1960))
+
+#perform pairwise and name columns
+data.pair <- apply(combn(ncol(data1), 2), 2, function(x) data1[,x[1]] - data1[,x[2]])
+colnames(data.pair) <- apply(combn(ncol(data1), 2), 2, function(x) paste(names(data1)[x], collapse=' - '))
+
